@@ -2,6 +2,8 @@
 #define MATRIX_H_INCLUDED
 
 #include <vector>
+#include <iostream>
+static int OUT_OF_RANGE = -9999;
 
 using namespace std;
 
