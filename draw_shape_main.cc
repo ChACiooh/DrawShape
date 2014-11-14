@@ -1,22 +1,22 @@
 // draw_shape_main.cc
-#include <iostream>
-#include <string>
-#include <vector>
 #include "draw_shape.h"
-
-using namespace std;
 
 void DeleteShape(int idx, vector<Shape*>& shapes)
 {
     if(idx >= shapes.size())    return;
-    shapes.erase(idx);
+    delete shapes[idx];
+    vector<Shape*> temp;
+    for(int i=0;i<idx;i++)  temp.push_back(shapes[i]);
+    for(int i=idx+1;i<shapes.size();i++)    temp.push_back(shapes[i]);
+    shapes = temp;
 }
 
 void DumpShapes(vector<Shape*>& shapes)
 {
     for(size_t i=0;i<shapes.size();i++)
     {
-        cout << i << " " << shapes[i]->GetShapeType() <<
+        cout << i << " ";
+        shapes[i]->Dump();
     }
 }
 
@@ -26,7 +26,7 @@ int main()
     size_t row, col;
     cin >> row >> col;
     Canvas canvas(row, col);
-    canvas.Draw(cout);
+    cout << canvas;
 
     while (true)
     {
@@ -35,13 +35,25 @@ int main()
         if (tok == "add") {
             string type;
             cin >> type;
-            Shape* shape = NULL;
-            if (type == "rect") shape = new Rectangle();
-            else if (type == "tri_up") shape = new UpTriangle();
-            else if (type == "tri_down") shape = new DownTriangle();
+            if (type == "rect")
+            {
+                Rectangle* shape = new Rectangle();
+                cin >> *shape;
+                shapes.push_back(shape);
+            }
+            else if (type == "tri_up")
+            {
+                UpTriangle* shape = new UpTriangle();
+                cin >> *shape;
+                shapes.push_back(shape);
+            }
+            else if (type == "tri_down")
+            {
+                DownTriangle* shape = new DownTriangle();
+                cin >> *shape;
+                shapes.push_back(shape);
+            }
             else continue;
-            cin >> *shape;
-            shapes.push_back(shape);
         } else if (tok == "draw") {
             canvas.Clear();
             for (int i = 0; i < shapes.size(); ++i) shapes[i]->Draw(&canvas);
@@ -49,14 +61,14 @@ int main()
         } else if (tok == "delete") {
             int index;
             cin >> index;
-            // Remove the corresponding shape - don't forget to delete it.
-            // ...
             DeleteShape(index, shapes);
         } else if (tok == "dump") {
-            // Implement dump functionality here.
-            // ...
-
-        } else {
+            DumpShapes(shapes);
+        } else if( tok == "resize") {
+            int wid, hgt;
+            cin >> wid >> hgt;
+            canvas.Resize(wid, hgt);
+        }else {
             break;
         }
     }

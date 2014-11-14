@@ -29,14 +29,15 @@ class Shape {
     public:
         virtual ~Shape();
         void Draw(Canvas* canvas) const;
-        const string GetShapeType() const;
-        void SetBrush(char b);
-        char GetBrush() const { return brush; }
+        virtual const string GetShapeType() const = 0;
+        virtual void SetBrush(char b) = 0;
+        virtual char GetBrush() const = 0;
         virtual void Dump() const = 0;
-        virtual void SetInfo() = 0;
     protected:
         string shape_type;
+        char brush;
         void SaveCoordinate(int, int);
+        virtual void SaveCoordinate() = 0;
         pair<int, int> GetCoordinate(int idx) const
         {
             if(idx >= marks.size()) return make_pair(-1, -1);
@@ -44,8 +45,7 @@ class Shape {
         }
     // 도형의 공통 속성을 정의.
     private:
-        vector< <int, int> > marks;
-        char brush;
+        vector<pair<int, int> > marks;
 };
 
 class Rectangle : public Shape
@@ -53,9 +53,14 @@ class Rectangle : public Shape
     public:
         Rectangle() { shape_type = "rect"; }
         void Draw(Canvas* canvas) const;
-        void SaveCoordinate(int, int, int, int);
+        const string GetShapeType() const { return shape_type; }
+        void SetBrush(char b){ brush = b; }
+        char GetBrush() const { return brush; }
         void Dump() const;
         void SetInfo(int, int, int, int);
+
+    protected:
+        void SaveCoordinate();
     private:
         int s_x;
         int s_y;
@@ -66,9 +71,12 @@ class Rectangle : public Shape
 class UpTriangle : public Shape
 { /* 필요한 멤버를 정의 */
     public:
-        UpTriangle() { shape_type = "up_tri"; }
+        UpTriangle() { shape_type = "tri_up"; }
         void Draw(Canvas* canvas) const;
-        void SaveCoordinate(int, int, int);
+        const string GetShapeType() const { return shape_type; }
+        void SetBrush(char b){ brush = b; }
+        char GetBrush() const { return brush; }
+        void SaveCoordinate();
         void Dump() const;
         void SetInfo(int, int, int);
     private:
@@ -80,9 +88,12 @@ class UpTriangle : public Shape
 class DownTriangle : public Shape
 { /* 필요한 멤버를 정의 */
     public:
-        DownTriangle() { shape_type = "down_tri"; }
+        DownTriangle() { shape_type = "tri_down"; }
         void Draw(Canvas* canvas) const;
-        void SaveCoordinate(int, int, int);
+        const string GetShapeType() const { return shape_type; }
+        void SetBrush(char b){ brush = b; }
+        char GetBrush() const { return brush; }
+        void SaveCoordinate();
         void Dump() const;
         void SetInfo(int, int, int);
     private:
